@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,8 +26,17 @@ jobs:
       - name: Check Backend Version
         run: cat backend_version.txt
 
-      - name: Upload Backend Artifact
-        uses: actions/upload-artifact@v4
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.2.0
         with:
-          name: backend-files
-          path: .
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd assignment-tracker-backend
+            git pull origin main
+            python3 -m venv venv
+            source venv/bin/activate
+            pip install -r requirements.txt
+            pkill -f "python3 app.py" || true
+            nohup python3 app.py > app.log 2>&1 &
