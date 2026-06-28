@@ -32,8 +32,10 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          script_stop: false
           script: |
-            cd assignment-tracker-backend
+            cd ~/assignment-tracker-backend
+
             git pull origin main
 
             if [ ! -d "venv" ]; then
@@ -41,10 +43,9 @@ jobs:
             fi
 
             source venv/bin/activate
+
             pip install -r requirements.txt
 
             pkill -f "python3 app.py" || true
-            sleep 2
 
-            nohup python3 app.py > app.log 2>&1 </dev/null &
-            disown
+            nohup python3 app.py > app.log 2>&1 < /dev/null &
