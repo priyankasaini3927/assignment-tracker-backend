@@ -31,7 +31,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.107.20.116.93 }}
+          key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd assignment-tracker-backend
             git pull origin main
